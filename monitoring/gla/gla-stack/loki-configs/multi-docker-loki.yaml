@@ -1,0 +1,94 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9096
+  # http_server_read_timeout: 30s
+  # http_server_write_timeout: 30s
+
+common:
+  path_prefix: /loki
+
+  ring:
+    kvstore:
+      store: memberlist
+
+  replication_factor: 2
+
+memberlist:
+  join_members:
+    - loki-1
+    - loki-2
+
+ingester:
+  wal:
+    enabled: true
+    dir: /loki/wal
+
+  chunk_idle_period: 1h
+  chunk_retain_period: 30s
+  max_chunk_age: 2h
+
+  lifecycler:
+    ring:
+      kvstore:
+        store: memberlist
+    final_sleep: 0s
+
+schema_config:
+  configs:
+    - from: 2023-01-01
+      store: tsdb
+      object_store: s3
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+storage_config:
+  tsdb_shipper:
+    active_index_directory: /loki/index
+    cache_location: /loki/index_cache
+    cache_ttl: 24h
+
+  aws:
+    s3: s3://us-east-1/logs-destination-tqd-examle
+    s3forcepathstyle: true
+
+limits_config:
+  ingestion_rate_mb: 30
+  ingestion_burst_size_mb: 60
+
+  max_streams_per_user: 200000
+  max_global_streams_per_user: 300000
+
+  max_query_parallelism: 32
+  max_query_series: 5000
+  split_queries_by_interval: 15m
+
+  retention_period: 168h
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+
+query_range:
+  parallelise_shardable_queries: true
+  cache_results: true
+  results_cache:
+    cache:
+      embedded_cache:
+        enabled: true
+        max_size_mb: 512
+        ttl: 1h
+
+frontend:
+  max_outstanding_per_tenant: 4096
+  compress_responses: true
+
+compactor:
+  working_directory: /loki/compactor
+  retention_enabled: true
+  delete_request_store: s3
+  compaction_interval: 15m
+  retention_delete_delay: 2h
+  retention_delete_worker_count: 25
+

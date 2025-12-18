@@ -1,0 +1,78 @@
+services:
+  grafana:
+    container_name: grafana
+    hostname: grafana
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_FEATURE_TOGGLES_ENABLE=alertingSimplifiedRouting,alertingQueryAndExpressionsStepMode
+      - GF_PLUGINS_PREINSTALL=grafana-clock-panel
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy
+          orgId: 1
+          url: http://loki:3100
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    image: grafana/grafana:${GRAFANA_VERSION}
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+    networks: [gla]
+  loki:
+    image: grafana/loki:${LOKI_VERSION}
+    container_name: loki
+    hostname: loki
+    pull_policy: always
+    command: -config.file=/etc/loki/loki.yaml
+    ports:
+      - "3100:3100"
+    volumes:
+### ONLY USE ONE AT A TIME.
+##### FOR S3 default example uncomment below one:
+    # - ./gla-stack/loki-configs/s3-default.yaml:/etc/loki/loki.yaml
+##### FOR default example uncomment below one:
+      - ./gla-stack/loki-configs/loki-config-default.yaml:/etc/loki/loki.yaml
+      - loki-data:/loki
+    networks: [gla]
+
+  alloy:
+    image: grafana/alloy:${ALLOY_VERSION}
+    container_name: alloy
+    hostname: alloy
+    pull_policy: always
+    ports:
+      - "12345:12345"
+    volumes:
+
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - alloy-data:/var/lib/alloy/data
+      - ./gla-stack/alloy-configs/config.alloy:/etc/alloy/config.alloy
+    command: >
+      run
+      --server.http.listen-addr=0.0.0.0:12345
+      --storage.path=/var/lib/alloy/data
+      /etc/alloy/config.alloy
+    restart: unless-stopped
+    networks: [gla]
+
+networks:
+  gla:
+
+volumes:
+  loki-data:
+  alloy-data:
+  grafana-data:

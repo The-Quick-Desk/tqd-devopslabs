@@ -1,0 +1,104 @@
+# Multiple loki container, with nginx as gateway
+# Using S3 object storage
+services:
+  grafana:
+    container_name: grafana
+    hostname: grafana
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_FEATURE_TOGGLES_ENABLE=alertingSimplifiedRouting,alertingQueryAndExpressionsStepMode
+      - GF_PLUGINS_PREINSTALL=grafana-clock-panel
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy
+          orgId: 1
+          url: http://loki-gw:3100
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    image: grafana/grafana:${GRAFANA_VERSION}
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+    mem_limit: 800m
+    networks: [gla]
+  loki-1:
+    image: grafana/loki:${LOKI_VERSION}
+    container_name: loki-1
+    hostname: loki-1
+    pull_policy: always
+    command: -config.file=/etc/loki/loki.yaml
+    # ports:
+    #   - "3101:3100"
+    volumes:
+      - ./gla-stack/loki-configs/multi-docker-loki.yaml:/etc/loki/loki.yaml
+      - loki1-data:/loki
+    mem_limit: 1024m
+    networks: [gla]
+
+  loki-2:
+    image: grafana/loki:${LOKI_VERSION}
+    container_name: loki-2
+    hostname: loki-2
+    pull_policy: always
+    command: -config.file=/etc/loki/loki.yaml
+    # ports:
+    #   - "3102:3100"
+    volumes:
+      - ./gla-stack/loki-configs/multi-docker-loki.yaml:/etc/loki/loki.yaml
+      - loki2-data:/loki
+    mem_limit: 1024m
+    networks: [gla]
+
+  alloy:
+    image: grafana/alloy:${ALLOY_VERSION}
+    container_name: alloy
+    hostname: alloy
+    pull_policy: always
+    ports:
+      - "12345:12345"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - alloy-data:/var/lib/alloy/data
+      - ./gla-stack/alloy-configs/config.alloy:/etc/alloy/config.alloy
+    command: >
+      run
+      --server.http.listen-addr=0.0.0.0:12345
+      --storage.path=/var/lib/alloy/data
+      /etc/alloy/config.alloy
+    restart: unless-stopped
+    mem_limit: 400m
+    networks: [gla]
+  
+  loki-gw:
+    image: nginx:${NGINX_VERSION}
+    container_name: loki-gw
+    hostname: loki-gw
+    pull_policy: always
+    ports:
+      - "3234:3100"
+    volumes:
+      - ./gla-stack/nginx-conf/loki-gw.conf:/etc/nginx/nginx.conf:ro 
+    networks: [gla]
+    mem_limit: 200m
+networks:
+  gla:
+
+volumes:
+  loki1-data:
+  loki2-data:
+  alloy-data:
+  grafana-data:
