@@ -52,10 +52,20 @@ making debugging and observability simple and efficient.
 ### Usage
 
 1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/The-Quick-Desk/tqd-devopslabs.git
+   cd tqd-devopslabs/monitoring/gla
+   ```
+###### MAKE SURE TO CHANGE THE CONFIG FILES AS PER YOUR REQUIREMENTS : .env & multi-docker-loki.yaml OR .env & s3-default.yaml
+###### As they need the S3 bucket name and region & .env for version.
+
 2. **Start the stack**
 
    ```bash
    docker-compose up -d
+   ## IF WANTED MULTI LOKI
+   docker-compose -f docker-compose.multi-loki.yml up -d
    ```
 3. **Access Grafana**
 

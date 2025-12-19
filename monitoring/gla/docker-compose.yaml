@@ -42,10 +42,15 @@ services:
       - "3100:3100"
     volumes:
 ### ONLY USE ONE AT A TIME.
-##### FOR S3 default example uncomment below one:
+
+  ##### FOR S3 default example uncomment below one
+  ##### Additionally, make sure to update the bucket name & region in s3-default.yaml.
+
     # - ./gla-stack/loki-configs/s3-default.yaml:/etc/loki/loki.yaml
-##### FOR default example uncomment below one:
-      - ./gla-stack/loki-configs/loki-config-default.yaml:/etc/loki/loki.yaml
+ ## OR ##
+  ##### FOR default example uncomment below one:
+
+      - ./gla-stack/loki-configs/default.yaml:/etc/loki/loki.yaml
       - loki-data:/loki
     networks: [gla]
 
