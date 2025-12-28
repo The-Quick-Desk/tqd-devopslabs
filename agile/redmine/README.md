@@ -18,9 +18,7 @@ https://youtu.be/qNP0qdtqc4g
 ## ✨ What You’ll Learn
 
 - Deploy Redmine on Linux using Docker
-- Run Redmine on an AWS EC2 instance
 - Configure Google OAuth 2.0 authentication
-- Create and use OAuth Client ID & Client Secret
 - Enable Google SSO login in Redmine
 - Verify the complete authentication flow
 
