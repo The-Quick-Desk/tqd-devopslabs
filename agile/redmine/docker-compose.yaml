@@ -1,0 +1,30 @@
+services:
+  redmine:
+    image: redmine:${REDMINE_VERSION}
+    container_name: redmine
+    restart: always
+    ports:
+    # Make sure to adjust port 80 on the host if it's already in use.
+      - "80:3000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    volumes:
+      # Attachments & uploads
+      - redmine_files:/usr/src/redmine/files
+      # Plugins (host-mounted)
+      - ./plugins:/usr/src/redmine/plugins
+
+  db:
+    image: postgres:${POSTGRES_VERSION}
+    container_name: redmine-db
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  redmine_files:
+  postgres_data:
