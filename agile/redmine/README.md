@@ -57,12 +57,11 @@ cd tqd-devopslabs/agile/redmine
 ````
 
 ⚠️ **Important:**
-Update the environment variables in:
+Update the environment variables according to your setup (ports, credentials) in:
 
 * `.env`
 * `docker-compose.yaml`
 
-according to your setup (ports, credentials, domain/IP).
 
 2. **Start the Redmine stack**
 
