@@ -86,6 +86,40 @@ http://<public-or-private-ip>:<host-port>
 
 ---
 
+#### Plugin Installation
+
+1. Get inside the redmine container
+
+```sh
+docker exec -it redmine sh
+```
+
+2. Install the dependencies
+
+```sh
+apk update && apk upgrade && \
+    apk add --no-cache \
+    build-base \
+    ruby-dev \
+    libffi-dev \
+    yaml-dev \
+    zlib-dev
+```
+
+3. Install the plugin
+
+```sh
+bundle install
+bundle exec rake redmine:plugins:migrate RAILS_ENV=production
+```
+
+4. Restart the redmine container
+
+```sh
+docker-compose restart redmine
+```
+
+---
 
 ## 🔐 Important Configuration Notes
 
