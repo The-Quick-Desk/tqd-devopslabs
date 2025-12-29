@@ -48,8 +48,9 @@ making debugging and observability simple and efficient.
 
 * Docker
 * Docker Compose
+* Git
 
-[Installation Document - Docker & Docker Compose](https://github.com/The-Quick-Desk/thequickdesk-dev/blob/master/tutorial/blogs/docker-installation.md)
+[Installation Document - Docker, Git & Docker Compose](https://github.com/The-Quick-Desk/thequickdesk-dev/blob/master/tutorial/blogs/docker-installation.md)
 ### Usage
 
 1. **Clone the repository**

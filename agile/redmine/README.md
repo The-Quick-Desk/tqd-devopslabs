@@ -41,6 +41,7 @@ https://youtu.be/qNP0qdtqc4g
 
 - Docker
 - Docker Compose
+- Git
 
 📄 Installation guide:  
 https://github.com/The-Quick-Desk/thequickdesk-dev/blob/master/tutorial/blogs/docker-installation.md
@@ -83,7 +84,15 @@ http://<public-or-private-ip>:<host-port>
 
 #### Plugin Installation
 
-1. **Get inside the redmine container**
+1. Go inside plugin directory and clone the plugin.
+
+
+```sh
+cd plugins
+git clone https://github.com/kontron/redmine_oauth.git
+```
+
+2. **Get inside the redmine container**
 
 ```sh
 docker exec -it redmine sh
