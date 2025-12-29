@@ -64,15 +64,11 @@ Update the environment variables in:
 
 according to your setup (ports, credentials, domain/IP).
 
----
-
 2. **Start the Redmine stack**
 
 ```bash
 docker-compose up -d
 ```
-
----
 
 3. **Access Redmine**
 
@@ -88,13 +84,13 @@ http://<public-or-private-ip>:<host-port>
 
 #### Plugin Installation
 
-1. Get inside the redmine container
+1. **Get inside the redmine container**
 
 ```sh
 docker exec -it redmine sh
 ```
 
-2. Install the dependencies
+2. **Install the dependencies**
 
 ```sh
 apk update && apk upgrade && \
@@ -106,14 +102,14 @@ apk update && apk upgrade && \
     zlib-dev
 ```
 
-3. Install the plugin
+3. **Install the plugin**
 
 ```sh
 bundle install
 bundle exec rake redmine:plugins:migrate RAILS_ENV=production
 ```
 
-4. Restart the redmine container
+4. **Restart the redmine container**
 
 ```sh
 docker-compose restart redmine
