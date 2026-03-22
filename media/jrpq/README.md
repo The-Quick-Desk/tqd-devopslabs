@@ -15,7 +15,7 @@ All deployed using **Docker Compose** on a Linux server.
 
 👉 **Watch on YouTube**
 [Build Your Own Netflix at Home 🔥 Jellyfin + Radarr + Docker (Complete Media Server Guide)](https://youtu.be/Gfd2oJAdaIk)
-
+https://youtu.be/Gfd2oJAdaIk
 ---
 
 ## ✨ Key Takeaways
