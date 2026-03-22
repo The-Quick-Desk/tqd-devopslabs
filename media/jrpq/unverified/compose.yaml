@@ -1,0 +1,53 @@
+services:
+
+  jellyfin:
+    image: jellyfin/jellyfin:${JELLYFIN_VERSION}
+    container_name: jellyfin
+    network_mode: "host"
+    volumes:
+      - ${CONFIG_DIR:-/opt}/jellyfin/config:/config
+      - ${CONFIG_DIR:-/opt}/jellyfin/cache:/cache
+      - ${MEDIA_DIR:-/data}/media:/media
+    restart: unless-stopped
+
+  qbittorrent:
+    image: linuxserver/qbittorrent:${QBITTORRENT_VERSION}
+    container_name: qbittorrent
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Etc/UTC}
+      - WEBUI_PORT=${QBITTORRENT_WEBUI_PORT:-8080}
+    volumes:
+      - ${MEDIA_DIR:-/data}:/data
+      - ${CONFIG_DIR:-/opt}/qbittorrent:/config
+    ports:
+      - ${QBITTORRENT_WEBUI_PORT:-8080}:8080
+    restart: unless-stopped
+
+  prowlarr:
+    image: linuxserver/prowlarr:${PROWLARR_VERSION}
+    container_name: prowlarr
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Etc/UTC}
+    volumes:
+      - ${CONFIG_DIR:-/opt}/prowlarr:/config
+    ports:
+      - ${PROWLARR_WEBUI_PORT:-9696}:9696
+    restart: unless-stopped
+
+  radarr:
+    image: linuxserver/radarr:${RADARR_VERSION}
+    container_name: radarr
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Etc/UTC}
+    volumes:
+      - ${CONFIG_DIR:-/opt}/radarr:/config
+      - ${MEDIA_DIR:-/data}:/data
+    ports:
+      - ${RADARR_WEBUI_PORT:-7878}:7878
+    restart: unless-stopped
